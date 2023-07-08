@@ -34,7 +34,7 @@ class Task(object):
         a=1
         while a>0:
             self.task()
-#https://v.douyin.com/UxEKsoX/
+    #https://v.douyin.com/UxEKsoX/
     def task(self):
         url='https://www.douyin.com/aweme/v1/web/aweme/post/?device_platform=webapp&aid=6383&channel=channel_pc_web&sec_user_id=' + self.sec_user_id + '&max_cursor=' + str(self.max_cursor) + '&locate_query=false&show_live_replay_strategy=1&count=50&publish_video_strategy_type=2&pc_client_type=1&version_code=170400&version_name=17.4.0&cookie_enabled=true&screen_width=1536&screen_height=864&browser_language=zh-CN&browser_platform=Win32&browser_name=Chrome&browser_version=108.0.5359.95&browser_online=true&engine_name=Blink&engine_version=108.0.5359.95&os_name=Windows&os_version=10&cpu_core_num=8&device_memory=8&platform=PC&downlink=10&effective_type=4g&round_trip_time=250'
         #url = 'https://www.douyin.com/aweme/v1/web/aweme/post/?device_platform=webapp&aid=6383&channel=channel_pc_web&sec_user_id=' + self.sec_user_id + '&max_cursor=1682731628000&locate_query=false&show_live_replay_strategy=1&count=20&publish_video_strategy_type=2&pc_client_type=1&version_code=170400&version_name=17.4.0&cookie_enabled=true&screen_width=1536&screen_height=864&browser_language=zh-CN&browser_platform=Win32&browser_name=Chrome&browser_version=108.0.5359.95&browser_online=true&engine_name=Blink&engine_version=108.0.5359.95&os_name=Windows&os_version=10&cpu_core_num=8&device_memory=8&platform=PC&downlink=10&effective_type=4g&round_trip_time=250'
@@ -67,11 +67,15 @@ class Task(object):
                 print("首次创建{}缓存文件夹".format(self.nickname))
             except:
                 print("{}缓存文件夹已存在".format(self.nickname))
+
+            # 创建记录的信息
             with open(self.nickname+"/"+self.nickname+"_采集数据.csv",'w',newline='',encoding='gbk',errors='ignore') as csvfile:
                 fieldnames=['aweme_id','时间','title','格式','收藏','评论','点赞','分享','share_url']
                 writer=csv.DictWriter(csvfile,fieldnames=fieldnames)
                 writer.writeheader()
         print('共{}个作品，已保存{}个，当前解析到{}'.format(str(self.count),str(self.numb),len(resp["aweme_list"])))
+
+        # 根据需求截取信息
         if self.count=='∞':
             aweme_list = resp["aweme_list"]
         elif len(resp["aweme_list"])>(int(self.count)-int(self.numb)):
@@ -114,16 +118,19 @@ class Task(object):
         print(now())
         print('本次执行共耗时{}时{}分{}秒'.format(str(hh), str(mm), str(ss)))
 
-    def download(self,aweme):
-        print('-------------------------------------')
-        print(aweme['desc'])
-        desc = aweme["statistics"]
-        print(desc)
-        desc['收藏'] = desc.pop('collect_count')
-        desc['评论'] = desc.pop('comment_count')
-        desc['点赞'] = desc.pop('digg_count')
-        desc['分享'] = desc.pop('share_count')
-        desc['share_url'] = aweme['share_url']
+    def download(self, aweme):
+        try :
+            print(aweme['desc'])
+            desc = aweme["statistics"]
+            print("[debug] desc: ", desc)
+            desc['收藏'] = desc.pop('collect_count')
+            desc['评论'] = desc.pop('comment_count')
+            desc['点赞'] = desc.pop('digg_count')
+            desc['分享'] = desc.pop('share_count')
+            # 修复bug
+            desc['share_url'] = aweme['share_info']['share_url']
+        except Exception as e:
+            print("[debug] Exception: ", repr(e))
         if aweme['images'] == None:
             desc['格式'] = "video"
         else:
@@ -214,12 +221,12 @@ def main():
         if b=='':
             b='∞'
         a='https'+findall('https(.*)', a)[0]
-        a = head(a)
-        headers={
-            "cookie":cookie()
-        }
-        a = str(a.headers.get('location'))
-        a = head(a,headers=headers).headers['Location']
+        # a = head(a)
+        # headers={
+        #     "cookie":cookie()
+        # }
+        # a = str(a.headers.get('location'))
+        # a = head(a,headers=headers).headers['Location']
         a = a.replace('https://www.douyin.com/user/','').replace('?previous_page=web_code_link','').replace('?previous_page=app_code_link','')
         c=Task(a,b,int(d))
         c.run()
