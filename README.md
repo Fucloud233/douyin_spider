@@ -8,10 +8,7 @@
 
 通过抖音官方接口，爬取用户所有视频和图片并创建excel数据
 
-
-![image](https://github.com/raindrop-hb/douyin_spider/assets/72308008/51232a40-5efe-4372-a4dd-f2488b9da0bb)
-
-
+原项目地址: https://github.com/raindrop-hb/douyin_spider
 
 ------
 目前已实现功能：
@@ -26,9 +23,13 @@
 ## 环境要求
 python 3.6 
 
-## 操作方法
-有基础下载py文件直接运行
-小白直接运行打包的exe
+## 使用方法	
+1. 使用浏览器登陆[任意抖音主页](https://www.douyin.com/user/MS4wLjABAAAAReXxwTVnBAfcJ6-JIQRd4ZrCjxqrWi-cnT8kvK5zinc)，然后按下`ctrl+shift+i`进入开发者模式，选择网络，并点击第1个请求，复制`Set-Cookie`字段内容
+
+   ![screenshot1](img/screenshot1.png)
+
+2. 将上述字段内容替换根目录中`cookie.txt`文件的内容
+3. 运行输入`python main.py`函数，根据提示一次输入对应信息
 
 # donate
 
